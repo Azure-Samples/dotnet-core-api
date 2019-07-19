@@ -1,11 +1,13 @@
 ---
-topic: ASP.NET Core API sample for Azure App Service
 languages:
-  - aspx-csharp
-  - rest
+- csharp
+- aspx-csharp
+page_type: sample
+description: "This is a sample application that you can use to follow along with the Run a RESTful API with CORS in Azure App Service tutorial."
 products:
-  - Azure App Service
-  - Azure Web Apps
+- azure
+- aspnet-core
+- azure-app-service
 ---
 
 # ASP.NET Core API sample for Azure App Service
