@@ -17,7 +17,7 @@ This is a sample application that you can use to follow along with the tutorial 
 
 ## License
 
-See [LICENSE](LICENSE.md).
+See [LICENSE](https://github.com/Azure-Samples/dotnet-core-api/blob/master/LICENSE.md).
 
 ## Contributing
 
