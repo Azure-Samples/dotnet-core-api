@@ -6,6 +6,7 @@ using System.Net.Http;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Mvc.Filters;
 using System.Net.Http.Headers;
+using Microsoft.AspNetCore.Authorization;
 
 #region TodoController
 namespace TodoApi.Controllers
@@ -29,6 +30,7 @@ namespace TodoApi.Controllers
 
         #region snippet_GetAll
         [HttpGet]
+        [Authorize("Administrator", Roles = "Administrator")]
         public IEnumerable<TodoItem> GetAll()
         {
             return _context.TodoItems.ToList();
