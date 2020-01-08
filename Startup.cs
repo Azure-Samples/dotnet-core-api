@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -23,12 +24,20 @@ namespace TodoApi
         {
             Configuration = configuration;
             Environment = environment;
+
+            var test = Configuration["Authentication:Authority"];
         }
         
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<TodoContext>(opt => opt.UseInMemoryDatabase("TodoList"));
-            services.AddMvc();
+            services.AddMvc(setupOptions =>
+            {
+                var authorizationPolicy = new AuthorizationPolicyBuilder(JwtBearerDefaults.AuthenticationScheme)
+                    .RequireAuthenticatedUser()
+                    .Build();
+                setupOptions.Filters.Add(new AuthorizeFilter(authorizationPolicy));
+            });
 
             // Register the Swagger generator, defining one or more Swagger documents
             services.AddSwaggerGen(c =>
@@ -65,6 +74,7 @@ namespace TodoApi
             }).AddJwtBearer(jwtOptions =>
             {
                 jwtOptions.Authority = Configuration["Authentication:Authority"];
+                jwtOptions.Audience = Configuration["Authentication:Audience"];
 
                 jwtOptions.SaveToken = false;
                 jwtOptions.IncludeErrorDetails = true;
@@ -76,11 +86,11 @@ namespace TodoApi
 
                 jwtOptions.TokenValidationParameters = new TokenValidationParameters
                 {
-                    ValidateAudience = false,
+                    ValidateAudience = true,
                     ValidateIssuerSigningKey = true,
                     ValidateIssuer = true,
                     ValidIssuer = Configuration["Authentication:Authority"],
-                    ValidateLifetime = true
+                    ValidateLifetime = true,
                 };
 
                 jwtOptions.Events = new JwtBearerEvents
@@ -112,13 +122,13 @@ namespace TodoApi
                 };
             });
 
-            services.AddAuthorization(policyOptions =>
-            {
-                policyOptions.AddPolicy("Administrator", new AuthorizationPolicyBuilder()
-                    .RequireAuthenticatedUser()
-                    .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)
-                    .Build());
-            });
+            // services.AddAuthorization(policyOptions =>
+            // {
+            //     policyOptions.AddPolicy("Keycloak", new AuthorizationPolicyBuilder()
+            //         .RequireAuthenticatedUser()
+            //         .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)
+            //         .Build());
+            // });
         }
     }
 }

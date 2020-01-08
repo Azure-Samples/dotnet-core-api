@@ -30,7 +30,7 @@ namespace TodoApi.Controllers
 
         #region snippet_GetAll
         [HttpGet]
-        [Authorize("Administrator", Roles = "Administrator")]
+        [Authorize(Roles = "todo:search")]
         public IEnumerable<TodoItem> GetAll()
         {
             return _context.TodoItems.ToList();
