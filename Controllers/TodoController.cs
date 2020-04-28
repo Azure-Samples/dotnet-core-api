@@ -1,20 +1,21 @@
-﻿using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
-using TodoApi.Models;
+using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using Newtonsoft.Json;
-using Microsoft.AspNetCore.Mvc.Filters;
 using System.Net.Http.Headers;
+using System.Threading.Tasks;
+using TodoApi.Models;
 
-#region TodoController
 namespace TodoApi.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]")] 
+    [ApiController]
     public class TodoController : Controller
     {
         private readonly TodoContext _context;
-        #endregion
 
         public TodoController(TodoContext context)
         {
@@ -27,81 +28,90 @@ namespace TodoApi.Controllers
             }
         }
 
-        #region snippet_GetAll
+        // GET: api/Todo
         [HttpGet]
-        public IEnumerable<TodoItem> GetAll()
+        public async Task<ActionResult<IEnumerable<TodoItem>>> GetTodoItem()
         {
-            return _context.TodoItems.ToList();
+            return await _context.TodoItems.ToListAsync();
         }
 
-        #region snippet_GetByID
-        [HttpGet("{id}", Name = "GetTodo")]
-        public IActionResult GetById(long id)
+        // GET: api/Todo/5
+        [HttpGet("{id}")]
+        public async Task<ActionResult<TodoItem>> GetTodoItem(long id)
         {
-            var item = _context.TodoItems.FirstOrDefault(t => t.Id == id);
-            if (item == null)
+            var todoItem = await _context.TodoItems.FindAsync(id);
+
+            if (todoItem == null)
             {
                 return NotFound();
             }
-            return new ObjectResult(item);
+
+            return todoItem;
         }
-        #endregion
-        #endregion
-        #region snippet_Create
-        [HttpPost]
-        public IActionResult Create([FromBody] TodoItem item)
-        {
-            if (item == null)
-            {
-                return BadRequest();
-            }
 
-            _context.TodoItems.Add(item);
-            _context.SaveChanges();
-
-            return CreatedAtRoute("GetTodo", new { id = item.Id }, item);
-        }
-        #endregion
-
-        #region snippet_Update
+        // PUT: api/Todo/5
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
+        // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPut("{id}")]
-        public IActionResult Update(long id, [FromBody] TodoItem item)
+        public async Task<IActionResult> PutTodoItem(long id, TodoItem todoItem)
         {
-            if (item == null || item.Id != id)
+            if (id != todoItem.Id)
             {
                 return BadRequest();
             }
 
-            var todo = _context.TodoItems.FirstOrDefault(t => t.Id == id);
-            if (todo == null)
+            _context.Entry(todoItem).State = EntityState.Modified;
+
+            try
             {
-                return NotFound();
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!TodoItemExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
             }
 
-            todo.IsComplete = item.IsComplete;
-            todo.Name = item.Name;
-
-            _context.TodoItems.Update(todo);
-            _context.SaveChanges();
-            return new NoContentResult();
+            return NoContent();
         }
-        #endregion
 
-        #region snippet_Delete
-        [HttpDelete("{id}")]
-        public IActionResult Delete(long id)
+        // POST: api/Todo
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
+        // more details see https://aka.ms/RazorPagesCRUD.
+        [HttpPost]
+        public async Task<ActionResult<TodoItem>> PostTodoItem(TodoItem todoItem)
         {
-            var todo = _context.TodoItems.FirstOrDefault(t => t.Id == id);
-            if (todo == null)
+            _context.TodoItems.Add(todoItem);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction("GetTodoItem", new { id = todoItem.Id }, todoItem);
+        }
+
+        // DELETE: api/Todo/5
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<TodoItem>> DeleteTodoItem(long id)
+        {
+            var todoItem = await _context.TodoItems.FindAsync(id);
+            if (todoItem == null)
             {
                 return NotFound();
             }
 
-            _context.TodoItems.Remove(todo);
-            _context.SaveChanges();
-            return new NoContentResult();
+            _context.TodoItems.Remove(todoItem);
+            await _context.SaveChangesAsync();
+
+            return todoItem;
         }
-        #endregion
+
+        private bool TodoItemExists(long id)
+        {
+            return _context.TodoItems.Any(e => e.Id == id);
+        }
     }
 }
-
