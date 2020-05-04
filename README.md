@@ -1,7 +1,6 @@
 ---
 languages:
 - csharp
-- aspx-csharp
 page_type: sample
 description: "This is a sample application that you can use to follow along with the Run a RESTful API with CORS in Azure App Service tutorial."
 products:
