@@ -5,9 +5,12 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
-using TodoApi.Models;
+using RundooApi.Models;
+using Azure.Data.Tables;
+using RundooApi.Services;
+using Microsoft.Azure.Cosmos;
 
-namespace TodoApi
+namespace RundooApi
 {
     public class Startup
     {
@@ -29,7 +32,16 @@ namespace TodoApi
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
             });
 
-            services.AddDbContext<TodoContext>(options => options.UseInMemoryDatabase("TodoList"));
+            var connectionString = Configuration.GetConnectionString("CosmosDocDatabase");
+            var tableConnectionString = Configuration.GetConnectionString("CosmosStorageTables");
+
+            var tableClient = new TableClient(tableConnectionString, "SupplierData");
+            var cosmosClient = new CosmosClient(connectionString);
+            var cosmosDatabasename = "TransactionDB";
+            var cosmosContainerId = "transactions2";
+
+            services.AddSingleton<TablesService>(new TablesService(tableClient));
+            services.AddSingleton<DocDBService>(new DocDBService(cosmosClient, cosmosDatabasename, cosmosContainerId));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
