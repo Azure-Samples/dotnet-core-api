@@ -41,7 +41,7 @@ namespace RundooApi.Services
         }
 
         /// <summary>
-        /// Get Transaction items to the container
+        /// Parse Query Type and submit relevant query
         /// </summary>
         public Task<IEnumerable<Transaction>> GetTransactionAsync(TransactionQueryType queryType, string id)
         {
@@ -63,7 +63,7 @@ namespace RundooApi.Services
         }
 
         /// <summary>
-        /// Get Transaction items to the container
+        /// Get Transaction items by TransactionId
         /// </summary>
         private Task<IEnumerable<Transaction>> GetTransactionByIdAsync(string transactionId)
         {
@@ -73,7 +73,7 @@ namespace RundooApi.Services
         }
 
         /// <summary>
-        /// Get Transaction items to the container
+        /// Get Transaction items by LocationId
         /// </summary>
         private Task<IEnumerable<Transaction>> GetTransactionByLocationIdAsync(string locationId)
         {
@@ -83,7 +83,7 @@ namespace RundooApi.Services
         }
 
         /// <summary>
-        /// Get Transaction items to the container
+        /// Get Transaction items by ProductId
         /// </summary>
         private Task<IEnumerable<Transaction>> GetTransactionByProductIdAsync(string productId)
         {
@@ -93,7 +93,7 @@ namespace RundooApi.Services
         }
 
         /// <summary>
-        /// Get Transaction items to the container
+        /// Get Transaction items by CustomerId
         /// </summary>
         private Task<IEnumerable<Transaction>> GetTransactionByCustomerIdAsync(string customerId)
         {
@@ -103,7 +103,7 @@ namespace RundooApi.Services
         }
 
         /// <summary>
-        /// Get Transaction items to the container
+        /// Get Transaction items by SupplierId
         /// </summary>
         private Task<IEnumerable<Transaction>> GetTransactionBySupplierIdAsync(string supplierId)
         {

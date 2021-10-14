@@ -13,7 +13,6 @@ using System;
 
 namespace RundooApi.Controllers
 {
-    [Route("api/[controller]")] 
     [ApiController]
     public class RundooController : Controller
     {
@@ -26,7 +25,7 @@ namespace RundooApi.Controllers
         }
 
         [HttpGet]
-        [Route("/GetTransaction")]
+        [Route("api/[controller]/GetTransaction")]
         public async Task<ActionResult<IEnumerable<Transaction>>> GetTransaction(TransactionQueryType transactionQueryType, string id)
         {
 
@@ -34,7 +33,7 @@ namespace RundooApi.Controllers
         }
 
         [HttpPost]
-        [Route("/CreateTransaction")]
+        [Route("api/[controller]/CreateTransaction")]
         public async Task<ActionResult<IEnumerable<Transaction>>> CreateTransaction(Transaction transaction)
         {
 
