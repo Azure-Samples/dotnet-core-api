@@ -1,6 +1,5 @@
 ﻿using Azure;
 using Azure.Data.Tables;
-using RundooApi.Entities;
 using RundooApi.Models;
 using Microsoft.Azure.Cosmos;
 using System;
