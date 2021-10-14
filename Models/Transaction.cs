@@ -9,7 +9,7 @@ namespace RundooApi.Models
         public string SupplierId { get; set; }
         public string LocationId { get; set; }
         public string ProductId { get; set; }
-        public uint PriceInCents { get; set; }
+        public uint Quantity { get; set; }
         public DateTime TimeStamp { get; set; }
     }
 }
